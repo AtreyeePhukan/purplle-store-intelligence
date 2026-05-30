@@ -30,27 +30,59 @@ I considered using a Vision Language Model (Claude Vision or GPT-4V) for zone cl
 
 ### Options Considered
 
-**Option A — Flat table, all fields as columns**
-Every field in the event schema becomes a database column. Simple queries, no JSON parsing.
+**Option A — Minimal Event Schema**
 
-**Option B — Core fields as columns, extras in a JSON metadata blob**
-Store `event_id`, `visitor_id`, `event_type`, `timestamp`, `zone_id`, `is_staff`, `confidence` as columns. Put `queue_depth`, `session_seq`, `sku_zone` in a JSON `metadata` column.
+Store only the fields required for analytics and API queries:
 
-**Option C — Event log only, compute everything on read**
-Store raw events with minimal schema. Compute all analytics at query time.
+* `event_id`
+* `store_id`
+* `camera_id`
+* `visitor_id`
+* `event_type`
+* `timestamp`
+* `zone_id`
+* `dwell_ms`
+* `is_staff`
+* `confidence`
+
+**Option B — Extended Event Schema**
+
+Store additional fields such as:
+
+* `queue_depth`
+* `session_seq`
+* `sku_zone`
+* customer journey metadata
+* basket information
+
+This provides richer analytics but increases implementation complexity and introduces many fields that are not required by the challenge.
 
 ### What AI Suggested
-Claude suggested Option B — keep the schema lean with a metadata blob for extensibility. The argument was that fields like `queue_depth` only matter for a subset of event types, so making them top-level columns wastes space and adds NULLs everywhere.
+
+Claude suggested designing a more extensible schema that could support future analytics use cases such as queue monitoring, customer journey reconstruction, and product interaction tracking. The recommendation was to include additional metadata fields from the start to avoid future schema changes.
 
 ### What I Chose and Why
-**Hybrid of A and B.**
 
-I agreed with Claude on `session_seq` and `sku_zone` going into metadata — they are never queried directly. I disagreed on `queue_depth`. The anomaly detection endpoint queries `queue_depth > 5` directly in SQL. Putting it in a JSON blob would require SQLite's `json_extract()` function, which adds complexity and makes the query harder to read and test. For a field that is directly queried, a column is the right choice.
+**Option A — Minimal Event Schema.**
 
-This is a case where I took AI advice selectively rather than wholesale — the general principle (lean schema with metadata blob) is sound, but the specific application needed adjustment based on the actual query patterns.
+I intentionally chose a smaller schema focused on the analytics requirements of this challenge. The required endpoints only depend on visitor events, timestamps, zone information, dwell time, staff flags, and confidence scores.
 
-### Schema Timestamp Decision
-All timestamps are stored as ISO-8601 UTC strings (`2026-04-10T20:11:07Z`) derived from the CCTV footage timestamp overlay visible in the top-right corner of each frame. This avoids timezone conversion bugs when footage and server are in different regions.
+Keeping the schema small provided several advantages:
+
+* Simpler API implementation
+* Easier testing and debugging
+* Fewer NULL or unused fields
+* Cleaner SQLite queries
+* Faster development under the challenge time constraints
+
+The goal was to optimize for reliability and clarity rather than speculative future requirements.
+
+If this system were deployed in production, I would likely extend the schema with customer journey and queue-management fields. For the scope of this challenge, the minimal schema was sufficient and reduced unnecessary complexity.
+
+### Timestamp Decision
+
+All timestamps are stored as ISO-8601 strings to maintain a consistent format across the detection pipeline, database layer, and API responses. This avoids ambiguity when events are generated from different cameras or processed on different machines.
+
 
 ---
 
