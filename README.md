@@ -323,6 +323,18 @@ To run the complete pipeline, place the provided challenge assets in the appropr
 
 ---
 
+## Evaluation Note
+
+Challenge datasets and CCTV footage are excluded from the repository as required.
+
+A pre-populated SQLite database (`events.db`) is included to allow reviewers to run:
+
+docker compose up
+
+and immediately evaluate API responses and dashboard functionality without requiring access to the original challenge assets.
+
+---
+
 ## Author
 
 Developed as part of the Purplle Tech Challenge 2026 Round 2.
