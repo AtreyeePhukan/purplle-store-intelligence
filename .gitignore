@@ -21,9 +21,6 @@ ENV/
 *.sqlite
 *.sqlite3
 
-events.db
-
-
 data/*.jsonl
 data/*.json
 
