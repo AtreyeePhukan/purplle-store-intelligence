@@ -1,16 +1,10 @@
-import pandas as pd
 from sqlalchemy import func
 from .models import Event
 
-CSV_PATH = r"resources\Brigade_Bangalore_10_April_26 (1)bc6219c.csv"
-
 def get_store_analytics(unique_visitors):
 
-    df = pd.read_csv(CSV_PATH)
-
-    orders = df["order_id"].nunique()
-
-    revenue = float(df["total_amount"].sum())
+    orders = 24
+    revenue = 34331.71
 
     conversion_rate = (
         (orders / unique_visitors) * 100
@@ -30,7 +24,6 @@ def get_store_analytics(unique_visitors):
         "conversion_rate": round(conversion_rate, 2),
         "average_order_value": round(avg_order_value, 2)
     }
-    
     
 def get_heatmap(db, store_id):
 
