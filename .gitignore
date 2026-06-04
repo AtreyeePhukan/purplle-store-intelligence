@@ -19,9 +19,6 @@ ENV/
 *.sqlite
 *.sqlite3
 
-data/*.jsonl
-data/*.json
-
 
 runs/
 output/
