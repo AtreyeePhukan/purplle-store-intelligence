@@ -471,6 +471,19 @@ and immediately evaluate API responses, analytics endpoints, and dashboard funct
 
 ---
 
+## Deliverables
+
+* **Generated Event Log:** `data/events_cam3_v2.jsonl`
+* **Source Code:** `app/`, `dashboard/`, `pipeline/`
+* **Tests:** `tests/`
+* **Design Document:** `docs/DESIGN.md`
+* **Engineering Decisions:** `docs/CHOICES.md`
+* **Docker Configuration:** `Dockerfile`, `docker-compose.yml`
+* **API Documentation:** FastAPI Swagger UI (`/docs`)
+* **Hosted Demo:** https://vision2value.streamlit.app/
+
+---
+
 ## Author
 
 Developed as part of the Purplle Tech Challenge 2026 Round 2.
